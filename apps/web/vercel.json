@@ -3,6 +3,6 @@
   "buildCommand": "cd ../.. && npm run build",
   "installCommand": "cd ../.. && npm install",
   "devCommand": "npm run dev",
-  "outputDirectory": ".next",
+  "outputDirectory": "apps/web/.next",
   "framework": "nextjs"
 }
