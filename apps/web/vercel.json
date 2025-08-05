@@ -1,7 +1,0 @@
-{
-  "version": 2,
-  "buildCommand": "echo '=== BUILD DEBUG START ===' && pwd && echo '=== CURRENT DIRECTORY CONTENTS ===' && ls -la && echo '=== RUNNING BUILD ===' && npm run build && echo '=== POST-BUILD DEBUG ===' && pwd && echo '=== LOOKING FOR .next DIRECTORY ===' && find . -name '.next' -type d && echo '=== CONTENTS OF CURRENT DIRECTORY ===' && ls -la && echo '=== CONTENTS OF .next IF EXISTS ===' && (ls -la .next || echo '.next not found in current directory') && echo '=== BUILD DEBUG END ==='",
-  "installCommand": "npm install",
-  "outputDirectory": ".next",
-  "framework": "nextjs"
-}
