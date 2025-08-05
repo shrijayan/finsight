@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
-import { analysisReportRepository } from 'db/src/repositories/AnalysisReportRepository';
-import { userRepository } from 'db/src/repositories/UserRepository';
+import { analysisReportRepository } from 'db/repositories/AnalysisReportRepository';
+import { userRepository } from 'db/repositories/UserRepository';
 import { generateReportPDF } from '../../../../../lib/pdf-generator';
 
 /**

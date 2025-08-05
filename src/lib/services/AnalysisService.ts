@@ -1,7 +1,7 @@
 import { GoogleGenAI } from '@google/genai';
-import { analysisReportRepository } from 'db/src/repositories/AnalysisReportRepository';
+import { analysisReportRepository } from 'db/repositories/AnalysisReportRepository';
 import { AnalysisError } from '../errors/AnalysisError';
-import { CreateAnalysisReportData, AnalysisReport } from 'lib/src/types';
+import { CreateAnalysisReportData, AnalysisReport } from 'lib/types';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
 
@@ -530,7 +530,7 @@ Important guidelines:
       } else {
         // Check if the report's userId is an email and we need to convert the provided ObjectId
         try {
-          const { userRepository } = await import('db/src/repositories/UserRepository');
+          const { userRepository } = await import('db/repositories/UserRepository');
           
           // If the report userId looks like an email, try to find user by email and compare ObjectIds
           if (typeof reportUserIdStr === 'string' && reportUserIdStr.includes('@')) {
@@ -588,7 +588,7 @@ Important guidelines:
       // If no reports found and userId looks like an ObjectId, also try finding by email
       if (reports.length === 0 && userId.length === 24 && !userId.includes('@')) {
         try {
-          const { userRepository } = await import('db/src/repositories/UserRepository');
+          const { userRepository } = await import('db/repositories/UserRepository');
           const user = await userRepository.findById(userId);
           if (user && user.email) {
             // Try finding reports by email for migration compatibility

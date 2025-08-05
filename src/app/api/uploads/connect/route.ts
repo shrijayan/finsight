@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { z } from 'zod';
-import { userRepository } from 'db/src/repositories/UserRepository';
+import { userRepository } from 'db/repositories/UserRepository';
 
 // Validation schema for connecting upload
 const connectUploadSchema = z.object({

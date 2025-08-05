@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
-import { analysisReportRepository } from 'db/src/repositories/AnalysisReportRepository';
-import { userRepository } from 'db/src/repositories/UserRepository';
-import { AnalysisReport } from 'lib/src/types';
+import { analysisReportRepository } from 'db/repositories/AnalysisReportRepository';
+import { userRepository } from 'db/repositories/UserRepository';
+import { AnalysisReport } from 'lib/types';
 
 // Mark this route as dynamic
 export const dynamic = 'force-dynamic';

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { analysisService } from '@/lib/services/AnalysisService';
-import { userRepository } from 'db/src/repositories/UserRepository';
+import { userRepository } from 'db/repositories/UserRepository';
 import { AnalysisError } from '@/lib/errors/AnalysisError';
 
 /**
