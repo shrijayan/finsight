@@ -1,8 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "npm run build",
-  "devCommand": "cd apps/web && npm run dev",
+  "buildCommand": "npm install && cd apps/web && npm run build",
   "installCommand": "npm install",
+  "framework": "nextjs",
   "outputDirectory": "apps/web/.next",
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD ."
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/apps/web/$1" }
+  ]
 }
