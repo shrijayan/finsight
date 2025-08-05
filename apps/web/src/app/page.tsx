@@ -3,6 +3,7 @@
 import React from 'react';
 import { FileUpload } from '@/components/features/FileUpload';
 import { useRouter } from 'next/navigation';
+import { useGlobalPaste } from '@/hooks/useGlobalPaste';
 import type { FileUploadResponse, FileValidationError } from 'lib/types';
 
 export default function HomePage() {
@@ -30,6 +31,38 @@ export default function HomePage() {
     // TODO: Add toast notification for errors in future enhancement
   }, []);
 
+  // Handle files pasted globally on the page
+  const handleGlobalPaste = React.useCallback(async (files: File[]) => {
+    // Create FormData and upload files
+    const formData = new FormData();
+    files.forEach(file => formData.append('files', file));
+
+    try {
+      const response = await fetch('/api/uploads', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Upload failed');
+      }
+
+      const result: FileUploadResponse = await response.json();
+      handleUploadComplete(result);
+    } catch (error) {
+      console.error('Global paste upload failed:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Upload failed';
+      handleUploadError(errorMessage);
+    }
+  }, [handleUploadComplete, handleUploadError]);
+
+  // Set up global paste listener
+  useGlobalPaste({
+    onFilesPaste: handleGlobalPaste,
+    disabled: false
+  });
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-cyan-100 px-4 py-8">
       <div className="w-full max-w-2xl space-y-8 text-center">
@@ -40,6 +73,9 @@ export default function HomePage() {
           </h1>
           <p className="text-lg text-gray-600">
             Upload and analyze your bank statements with ease. Get insights into your spending patterns and categorize transactions automatically.
+          </p>
+          <p className="text-sm text-gray-500">
+            💡 Pro tip: Press <kbd className="px-2 py-1 bg-gray-200 rounded text-xs">Cmd+V</kbd> (or <kbd className="px-2 py-1 bg-gray-200 rounded text-xs">Ctrl+V</kbd>) anywhere on this page to paste files from your clipboard!
           </p>
         </div>
 

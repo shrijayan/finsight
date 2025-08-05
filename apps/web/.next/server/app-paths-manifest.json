@@ -1,12 +1,7 @@
 {
-  "/page": "app/page.js",
   "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
-  "/api/uploads/route": "app/api/uploads/route.js",
-  "/(auth)/login/page": "app/(auth)/login/page.js",
-  "/api/uploads/connect/route": "app/api/uploads/connect/route.js",
-  "/api/analysis/status/[analysisId]/route": "app/api/analysis/status/[analysisId]/route.js",
   "/api/reports/route": "app/api/reports/route.js",
-  "/api/reports/[reportId]/route": "app/api/reports/[reportId]/route.js",
-  "/(app)/dashboard/page": "app/(app)/dashboard/page.js",
-  "/(app)/dashboard/history/page": "app/(app)/dashboard/history/page.js"
+  "/api/analysis/[analysisId]/route": "app/api/analysis/[analysisId]/route.js",
+  "/(app)/dashboard/history/page": "app/(app)/dashboard/history/page.js",
+  "/(app)/dashboard/reports/[reportId]/page": "app/(app)/dashboard/reports/[reportId]/page.js"
 }

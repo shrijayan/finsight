@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Upload, FileText, Clock, CheckCircle, History, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+import { useGlobalPaste } from '@/hooks/useGlobalPaste';
 import type { FileUploadResponse, FileValidationError } from 'lib/types';
 
 interface PendingUpload {
@@ -165,6 +166,45 @@ export default function DashboardPage() {
     setShowUploadForm(true);
   }, []);
 
+  // Handle files pasted globally on the page
+  const handleGlobalPaste = React.useCallback(async (files: File[]) => {
+    if (analysisStatus === 'processing') return;
+
+    // Show upload form if it's not already visible
+    if (!showUploadForm && analysisStatus === 'idle') {
+      setShowUploadForm(true);
+    }
+
+    // Create FormData and upload files
+    const formData = new FormData();
+    files.forEach(file => formData.append('files', file));
+
+    try {
+      const response = await fetch('/api/uploads', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Upload failed');
+      }
+
+      const result: FileUploadResponse = await response.json();
+      await handleUploadComplete(result);
+    } catch (error) {
+      console.error('Global paste upload failed:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Upload failed';
+      handleUploadError(errorMessage);
+    }
+  }, [analysisStatus, showUploadForm, handleUploadComplete, handleUploadError]);
+
+  // Set up global paste listener
+  useGlobalPaste({
+    onFilesPaste: handleGlobalPaste,
+    disabled: analysisStatus === 'processing'
+  });
+
   return (
     <div className="space-y-8">
       {/* Header Section */}
@@ -176,6 +216,11 @@ export default function DashboardPage() {
              analysisStatus === 'completed' ? 'Your analysis is ready!' :
              'Upload your bank statements to get started with AI-powered analysis'}
           </p>
+          {analysisStatus !== 'processing' && (
+            <p className="text-xs text-muted-foreground">
+              💡 Pro tip: Press <kbd className="px-1 py-0.5 bg-muted rounded text-xs">Cmd+V</kbd> (or <kbd className="px-1 py-0.5 bg-muted rounded text-xs">Ctrl+V</kbd>) anywhere on this page to paste files from your clipboard!
+            </p>
+          )}
         </div>
         <div className="flex gap-2">
           {analysisStatus === 'completed' && (

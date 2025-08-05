@@ -20,7 +20,11 @@ interface FileUploadProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'on
 const ACCEPTED_FILE_TYPES = {
   'application/pdf': ['.pdf'],
   'text/csv': ['.csv'],
-  'text/plain': ['.txt']
+  'text/plain': ['.txt'],
+  'image/jpeg': ['.jpg', '.jpeg'],
+  'image/png': ['.png'],
+  'image/gif': ['.gif'],
+  'image/webp': ['.webp']
 };
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -47,6 +51,7 @@ const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
     const [filesWithProgress, setFilesWithProgress] = React.useState<FileWithProgress[]>([]);
     const [isUploading, setIsUploading] = React.useState(false);
     const [validationErrors, setValidationErrors] = React.useState<FileValidationError[]>([]);
+    const [isPasteActive, setIsPasteActive] = React.useState(false);
 
     const validateFile = React.useCallback((file: File): FileValidationError | null => {
       // Check file type
@@ -54,7 +59,7 @@ const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
       if (!acceptedTypes.includes(file.type)) {
         return {
           filename: file.name,
-          error: `File type ${file.type} is not supported. Please upload PDF, CSV, or TXT files only.`,
+          error: `File type ${file.type} is not supported. Please upload PDF, CSV, TXT, or image files only.`,
           code: 'INVALID_TYPE'
         };
       }
@@ -220,6 +225,50 @@ const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
       setValidationErrors([]);
     }, []);
 
+    // Handle clipboard paste events
+    const handlePaste = React.useCallback(async (event: ClipboardEvent) => {
+      if (disabled || isUploading) return;
+      
+      event.preventDefault();
+      
+      const items = event.clipboardData?.items;
+      if (!items) return;
+
+      const files: File[] = [];
+      
+      // Process clipboard items
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        
+        // Handle files
+        if (item.kind === 'file') {
+          const file = item.getAsFile();
+          if (file) {
+            files.push(file);
+          }
+        }
+      }
+
+      if (files.length > 0) {
+        setIsPasteActive(true);
+        setTimeout(() => setIsPasteActive(false), 1000);
+        await handleFileUpload(files);
+      }
+    }, [disabled, isUploading, handleFileUpload]);
+
+    // Set up global paste event listener
+    React.useEffect(() => {
+      const handleGlobalPaste = (event: ClipboardEvent) => {
+        // Only handle paste if the component is visible and focused
+        if (document.activeElement?.closest('[data-paste-zone]')) {
+          handlePaste(event);
+        }
+      };
+
+      document.addEventListener('paste', handleGlobalPaste);
+      return () => document.removeEventListener('paste', handleGlobalPaste);
+    }, [handlePaste]);
+
     const successfulUploads = filesWithProgress.filter(f => f.status === 'success').length;
     const hasFiles = filesWithProgress.length > 0;
     const hasErrors = validationErrors.length > 0 || filesWithProgress.some(f => f.status === 'error');
@@ -232,10 +281,12 @@ const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
           </Label>
           <div
             {...getRootProps()}
+            data-paste-zone
             className={cn(
               'border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors',
               'hover:border-primary/50 hover:bg-primary/5',
               isDragActive && 'border-primary bg-primary/10',
+              isPasteActive && 'border-green-500 bg-green-50',
               (disabled || isUploading) && 'cursor-not-allowed opacity-50',
               hasErrors && 'border-destructive/50 bg-destructive/5'
             )}
@@ -255,7 +306,8 @@ const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
                 </p>
               </div>
               <div className="text-xs text-muted-foreground space-y-1">
-                <p>Supports: PDF, CSV, TXT files</p>
+                <p>Supports: PDF, CSV, TXT, and image files</p>
+                <p>Press Cmd+V (or Ctrl+V) to paste from clipboard</p>
                 <p>Max size: {(maxSize / (1024 * 1024))}MB per file, up to {maxFiles} files</p>
               </div>
             </div>
