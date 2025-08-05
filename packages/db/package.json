@@ -14,7 +14,8 @@
     "test-connection": "ts-node src/test-connection.ts"
   },
   "dependencies": {
-    "mongoose": "^8.4.1"
+    "mongoose": "^8.4.1",
+    "lib": "workspace:*"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",

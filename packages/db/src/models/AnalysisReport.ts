@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { AnalysisReport as IAnalysisReport } from 'lib/src/types';
+import { AnalysisReport as IAnalysisReport } from 'lib';
 
 // AnalysisReport schema definition
 const analysisReportSchema = new mongoose.Schema({
