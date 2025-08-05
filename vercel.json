@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "echo '=== ROOT BUILD DEBUG START ===' && pwd && echo '=== ROOT DIRECTORY CONTENTS ===' && ls -la && echo '=== RUNNING TURBO BUILD ===' && npm run build && echo '=== POST-BUILD ROOT DEBUG ===' && pwd && echo '=== LOOKING FOR ALL .next DIRECTORIES ===' && find . -name '.next' -type d && echo '=== CHECKING apps/web/.next ===' && (ls -la apps/web/.next || echo 'apps/web/.next not found') && echo '=== ROOT BUILD DEBUG END ==='",
+  "buildCommand": "npm run build",
   "devCommand": "cd apps/web && npm run dev",
   "installCommand": "npm install",
   "outputDirectory": "apps/web/.next",
