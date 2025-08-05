@@ -103,7 +103,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     let userId: string;
     if (isAuthenticated) {
       // For authenticated users, look up their ObjectId
-      const { userRepository } = await import('db/src/repositories/UserRepository');
+      const { userRepository } = await import('db/repositories/UserRepository');
       const user = await userRepository.findByEmail(session.user.email!);
       if (user) {
         userId = user._id; // Use ObjectId for authenticated users
