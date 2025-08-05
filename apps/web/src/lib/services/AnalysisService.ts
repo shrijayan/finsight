@@ -198,7 +198,23 @@ Important guidelines:
           if (fileRef.startsWith('local://')) {
             // Handle local file
             const localPath = fileRef.replace('local://', '');
-            const filePath = join(process.cwd(), 'uploads', localPath);
+            const currentDir = process.cwd();
+            console.log(`Process CWD: ${currentDir}`);
+            
+            // More robust path resolution - check if we're in the correct directory
+            let filePath: string;
+            if (currentDir.includes('bank_statement')) {
+              // We're in the right project directory
+              filePath = join(currentDir, 'apps', 'web', 'uploads', localPath);
+            } else {
+              // We might be in the wrong directory, construct from current directory but go up to find the right path
+              const parts = currentDir.split('/');
+              const projectRoot = parts.slice(0, -1).join('/') + '/bank_statement';
+              filePath = join(projectRoot, 'apps', 'web', 'uploads', localPath);
+              console.log(`Adjusted path from ${currentDir} to ${projectRoot}`);
+            }
+            
+            console.log(`Attempting to read file at: ${filePath}`);
             
             // Read file as buffer
             const fileBuffer = await readFile(filePath);

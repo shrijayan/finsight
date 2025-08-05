@@ -99,7 +99,22 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // 1. Check authentication (optional for guest uploads)
     const session = await getServerSession();
     const isAuthenticated = !!session?.user?.email;
-    const userId = session?.user?.email || `guest_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    let userId: string;
+    if (isAuthenticated) {
+      // For authenticated users, look up their ObjectId
+      const { userRepository } = await import('db/src/repositories/UserRepository');
+      const user = await userRepository.findByEmail(session.user.email!);
+      if (user) {
+        userId = user._id; // Use ObjectId for authenticated users
+      } else {
+        // User not found in database, treat as guest
+        userId = `guest_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      }
+    } else {
+      // Guest user
+      userId = `guest_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    }
 
     // 2. Parse form data
     const formData = await request.formData();

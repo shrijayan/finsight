@@ -4,8 +4,7 @@ import { AnalysisReport as IAnalysisReport } from 'lib/src/types';
 // AnalysisReport schema definition
 const analysisReportSchema = new mongoose.Schema({
   userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    type: mongoose.Schema.Types.Mixed, // Allow both ObjectId (authenticated users) and String (guest users)
     required: true,
     index: true // Indexed for fast lookups of user's reports
   },
